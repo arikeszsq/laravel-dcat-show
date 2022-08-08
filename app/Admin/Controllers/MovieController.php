@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\ExchangeCodeAction;
 use App\Admin\Actions\Grid\TestBatchAction;
+use App\Admin\Actions\Grid\TestRowAction;
 use App\Admin\Actions\Grid\UpdateStatusAction;
 use App\Admin\Actions\Grid\UpdateStatusBatchAction;
 use App\Models\Movie;
@@ -50,6 +51,10 @@ class MovieController extends AdminController
             });
 
             $grid->actions(function (Grid\Displayers\Actions $actions) {
+
+                $actions->append(new TestRowAction());
+
+
                 $status = $actions->row->status;
                 if ($status == 1) {
                     $actions->append(new UpdateStatusAction('<span class="btn btn-sm btn-primary">下架</span>'));
