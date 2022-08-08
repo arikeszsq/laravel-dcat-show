@@ -22,11 +22,11 @@ class MovieController extends AdminController
             $grid->rowSelector()->click();
             $grid->column('id')->sortable();
             $grid->column('title');
-            $grid->column('director');
-            $grid->column('director')->display(function($userId) {
-                return User::query()->find($userId)->name;
+            $grid->column('director')->display(function ($director) {
+                $user = User::query()->find($director);
+                return $user->name;
             });
-            $grid->column('describe');
+            $grid->column('describe')->width(300);
             $grid->column('rate');
 
             $grid->column('released', '上映?')->display(function ($released) {
@@ -36,10 +36,26 @@ class MovieController extends AdminController
             $grid->column('created_at')->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->equal('id','编号')->width(3);
+                $filter->equal('id', '编号')->width(3);
                 $filter->between('created_at', '添加时间')->datetime()->width(6);
             });
         });
+
+
+//        return Grid::make(Movie::with(['user', 'comments']), function (Grid $grid) {
+//            $grid->rowSelector()->click();
+//            $grid->column('id')->sortable();
+//            $grid->column('title');
+//            $grid->column('user.name','导演');
+//            $grid->column('describe')->width(500);
+//            $grid->column('created_at')->sortable();
+//            $grid->filter(function (Grid\Filter $filter) {
+//                $filter->equal('id', '编号')->width(3);
+//                $filter->between('created_at', '添加时间')->datetime()->width(6);
+//            });
+//        });
+
+
     }
 
     /**
@@ -71,14 +87,45 @@ class MovieController extends AdminController
      */
     protected function form()
     {
-        return Form::make(new Movie(), function (Form $form) {
+        return Form::make(Movie::with(['comments']), function (Form $form) {
             $form->display('id');
-            $form->text('title');
-            $form->text('director');
-            $form->text('describe');
-            $form->text('rate');
-            $form->text('released');
-            $form->text('release_at');
+            $form->text('title')->required();
+
+            $directors = [
+                1 => 'John',
+                2 => 'Smith',
+                3 => 'Kate',
+            ];
+//            $users = \App\Models\User::query()->select(['id', 'name'])->get();
+//            foreach ($users as $user) {
+//                $directors[$user->id] = $user->name;
+//            }
+
+            $form->select('director', '导演')->options($directors)->required();
+
+            $form->textarea('describe');
+            $form->number('rate');
+
+            // 添加开关操作
+            $form->switch('released', '发布？');
+            $form->datetime('release_at');
+
+            //json 表单
+            $form->table('actors', function ($table) {
+                $table->text('姓名');
+            })->saving(function ($v) {
+                return json_encode($v);
+            })->label('演员');
+
+
+            $form->hasMany('comments', function (Form\NestedForm $form) use($directors) {
+                $form->textarea('content','评论内容');
+                $form->select('creator', '评论人')->options($directors);
+            })->label('评论');
+
+
+            $form->image('logo')->autoUpload();
+
 
             $form->display('created_at');
             $form->display('updated_at');
