@@ -17,4 +17,5 @@ Route::group([
 
     $router->resource('users', 'UserController');
     $router->resource('movie', 'MovieController');
+    $router->resource('movie-comment', 'MovieCommentController');
 });

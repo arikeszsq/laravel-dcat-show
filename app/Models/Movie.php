@@ -14,4 +14,9 @@ class Movie extends Model
     {
         return $this->hasOne(User::class,'id','director');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(MovieComment::class,'movie_id','id');
+    }
 }
