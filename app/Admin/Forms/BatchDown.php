@@ -4,9 +4,12 @@ namespace App\Admin\Forms;
 
 use App\Models\Movie;
 use Dcat\Admin\Widgets\Form;
+use Dcat\Admin\Traits\LazyWidget;
+use Dcat\Admin\Contracts\LazyRenderable;
 
-class BatchDown extends Form
+class BatchDown extends Form implements LazyRenderable
 {
+    use LazyWidget;
     /**
      * Handle the form request.
      *
