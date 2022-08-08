@@ -2,10 +2,12 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\ExchangeCodeAction;
 use App\Models\Movie;
 use App\User;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
+use Dcat\Admin\Grid\Tools;
 use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
 
@@ -38,6 +40,10 @@ class MovieController extends AdminController
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id', '编号')->width(3);
                 $filter->between('created_at', '添加时间')->datetime()->width(6);
+            });
+
+            $grid->tools(function (Tools $tools) {
+                $tools->append(ExchangeCodeAction::make());  //也可以直接 new ExchangeCodeAction() 这样就添加了一个按钮
             });
         });
 
