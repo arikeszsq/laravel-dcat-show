@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\ExchangeCodeAction;
+use App\Admin\Actions\Grid\TestBatchAction;
 use App\Admin\Actions\Grid\UpdateStatusAction;
 use App\Admin\Actions\Grid\UpdateStatusBatchAction;
 use App\Models\Movie;
@@ -57,6 +58,8 @@ class MovieController extends AdminController
 
             $grid->batchActions(function (Grid\Tools\BatchActions $batch) {
                 $batch->add(new UpdateStatusBatchAction());
+                $batch->add(new TestBatchAction());
+
             });
 
         });
