@@ -3,6 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Actions\ExchangeCodeAction;
+use App\Admin\Actions\Grid\UpdateStatusAction;
+use App\Admin\Actions\Grid\UpdateStatusBatchAction;
 use App\Models\Movie;
 use App\User;
 use Dcat\Admin\Form;
@@ -45,6 +47,18 @@ class MovieController extends AdminController
             $grid->tools(function (Tools $tools) {
                 $tools->append(ExchangeCodeAction::make());  //也可以直接 new ExchangeCodeAction() 这样就添加了一个按钮
             });
+
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                $status = $actions->row->status;
+                if ($status == 1) {
+                    $actions->append(new UpdateStatusAction('<span class="btn btn-sm btn-primary">下架</span>'));
+                }
+            });
+
+            $grid->batchActions(function (Grid\Tools\BatchActions $batch) {
+                $batch->add(new UpdateStatusBatchAction());
+            });
+
         });
 
 
@@ -124,8 +138,8 @@ class MovieController extends AdminController
             })->label('演员');
 
 
-            $form->hasMany('comments', function (Form\NestedForm $form) use($directors) {
-                $form->textarea('content','评论内容');
+            $form->hasMany('comments', function (Form\NestedForm $form) use ($directors) {
+                $form->textarea('content', '评论内容');
                 $form->select('creator', '评论人')->options($directors);
             })->label('评论');
 
